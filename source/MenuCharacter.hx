@@ -8,12 +8,14 @@ class CharacterSetting {
 	public var y(default, null):Int;
 	public var scale(default, null):Float;
 	public var flipped(default, null):Bool;
+	public var antialiasing(default, null):Bool;
 
-	public function new(x:Int = 0, y:Int = 0, scale:Float = 1.0, flipped:Bool = false) {
+	public function new(x:Int = 0, y:Int = 0, scale:Float = 1.0, flipped:Bool = false, antialiasing:Bool = true) {
 		this.x = x;
 		this.y = y;
 		this.scale = scale;
 		this.flipped = flipped;
+		this.antialiasing = antialiasing;
 	}
 }
 
