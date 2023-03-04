@@ -272,7 +272,7 @@ class PlayState extends MusicBeatState {
 				add(trail);
 		});
 
-		script.interp.variables.set("this", instance);
+		script.interp.variables.set("this", this);
 
 		script.interp.variables.set("boyfriend", boyfriend);
 		script.interp.variables.set("dad", dad);

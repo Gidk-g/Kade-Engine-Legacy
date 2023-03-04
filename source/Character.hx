@@ -1,7 +1,9 @@
 package;
 
 import flixel.FlxSprite;
+import lime.utils.Assets;
 import flixel.util.FlxColor;
+import modding.scripting.Hscript;
 
 using StringTools;
 
@@ -14,6 +16,10 @@ class Character extends FlxSprite {
 	public var barColor:FlxColor;
 
 	public var holdTimer:Float = 0;
+
+	public var danceIdle:Bool = false;
+
+	public var script = new Hscript();
 
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false) {
 		super(x, y);
@@ -114,6 +120,14 @@ class Character extends FlxSprite {
 				barColor = 0xFF31b0d1;
 		}
 
+		if (Assets.exists(Paths.hx("characters/" + curCharacter))) {
+		    script.loadScript("characters/" + curCharacter);
+		}
+
+		script.interp.variables.set("character", this);
+        script.call("createCharacter", [curCharacter, isPlayer]);
+
+		recalculateDanceIdle();
 		dance();
 
 		if (isPlayer)
@@ -135,15 +149,19 @@ class Character extends FlxSprite {
 				holdTimer = 0;
 			}
 		}
+		script.call("update", [elapsed]);
 		super.update(elapsed);
 	}
 
 	private var danced:Bool = false;
 
-	public function dance() {
-		switch (curCharacter) {
-			case 'gf':
-				if (!animation.curAnim.name.startsWith('hair')) {
+	public function dance()
+	{
+		switch (curCharacter)
+		{
+			default:
+				if (danceIdle)
+				{
 					danced = !danced;
 
 					if (danced)
@@ -151,9 +169,36 @@ class Character extends FlxSprite {
 					else
 						playAnim('danceLeft');
 				}
-			default:
-				playAnim('idle');
+				else if (animation.getByName('idle') != null) {
+					playAnim('idle');
+				}
 		}
+	}
+
+	public var danceEveryNumBeats:Int = 2;
+	private var settingCharacterUp:Bool = true;
+
+	public function recalculateDanceIdle() {
+		var lastDanceIdle:Bool = danceIdle;
+
+		danceIdle = (animation.getByName('danceLeft') != null && animation.getByName('danceRight') != null);
+
+		if(settingCharacterUp)
+		{
+			danceEveryNumBeats = (danceIdle ? 1 : 2);
+		}
+		else if(lastDanceIdle != danceIdle)
+		{
+			var calc:Float = danceEveryNumBeats;
+			if(danceIdle)
+				calc /= 2;
+			else
+				calc *= 2;
+
+			danceEveryNumBeats = Math.round(Math.max(calc, 1));
+		}
+
+		settingCharacterUp = false;
 	}
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void {
