@@ -33,15 +33,11 @@ class MainMenuState extends MusicBeatState {
 	var newGaming:FlxText;
 	var newGaming2:FlxText;
 
-	public static var firstStart:Bool = true;
-
 	public static var kadeEngineLegacyVer:String = "1.0A";
 
 	var bg:FlxSprite;
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
-
-	public static var finishedFunnyMove:Bool = false;
 
 	override function create() {
 		Paths.clearStoredMemory();
@@ -83,8 +79,13 @@ class MainMenuState extends MusicBeatState {
 		menuItems = new FlxTypedGroup<FlxSprite>();
 		add(menuItems);
 
+		var scale:Float = 1;
+
 		for (i in 0...optionShit.length) {
-			var menuItem:FlxSprite = new FlxSprite(0, FlxG.height * 1.6);
+			var offset:Float = 108 - (Math.max(optionShit.length, 4) - 4) * 80;
+			var menuItem:FlxSprite = new FlxSprite(0, (i * 140)  + offset);
+			menuItem.scale.x = scale;
+			menuItem.scale.y = scale;
 			menuItem.frames = Paths.getSparrowAtlas('menuitems/' + optionShit[i]);
 			menuItem.animation.addByPrefix('idle', optionShit[i] + " basic", 24);
 			menuItem.animation.addByPrefix('selected', optionShit[i] + " white", 24);
@@ -92,24 +93,12 @@ class MainMenuState extends MusicBeatState {
 			menuItem.ID = i;
 			menuItem.screenCenter(X);
 			menuItems.add(menuItem);
-			menuItem.scrollFactor.set();
+			var scr:Float = (optionShit.length - 4) * 0.135;
+			if(optionShit.length < 6) scr = 0;
+			menuItem.scrollFactor.set(0, scr);
 			menuItem.antialiasing = true;
 			menuItem.updateHitbox();
-
-			if (firstStart) {
-				FlxTween.tween(menuItem, {y: 135 + (i * 180)}, 1 + (i * 0.25), {ease: FlxEase.expoInOut, onComplete: function(flxTween:FlxTween) {
-					finishedFunnyMove = true;
-					changeItem();
-					bg.scrollFactor.x = 0;
-					bg.scrollFactor.y = 0.18;
-					magenta.scrollFactor.x = 0;
-					magenta.scrollFactor.y = 0.18;
-				}});
-			} else
-				menuItem.y = 135 + (i * 180);
 		}
-
-		firstStart = false;
 
 		FlxG.camera.follow(camFollow, null, 0.60 * (60 / FlxG.save.data.fpsCap));
 
@@ -184,20 +173,18 @@ class MainMenuState extends MusicBeatState {
 	}
 
 	function changeItem(huh:Int = 0) {
-		if (finishedFunnyMove) {
-			curSelected += huh;
+		curSelected += huh;
 
-			if (curSelected >= menuItems.length)
-				curSelected = 0;
-			if (curSelected < 0)
-				curSelected = menuItems.length - 1;
-		}
+		if (curSelected >= menuItems.length)
+			curSelected = 0;
+		if (curSelected < 0)
+			curSelected = menuItems.length - 1;
 
 		menuItems.forEach(function(spr:FlxSprite) {
 			spr.animation.play('idle');
 			spr.updateHitbox();
 
-			if (spr.ID == curSelected && finishedFunnyMove) {
+			if (spr.ID == curSelected) {
 				spr.animation.play('selected');
 				camFollow.setPosition(spr.getGraphicMidpoint().x, spr.getGraphicMidpoint().y);
 				spr.centerOffsets();
