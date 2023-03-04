@@ -114,9 +114,9 @@ class StoryMenuState extends MusicBeatState {
 			}
 		}
 
-		grpWeekCharacters.add(new MenuCharacter(0, 100, 0.5, false, true));
-		grpWeekCharacters.add(new MenuCharacter(450, 25, 0.9, true, true));
-		grpWeekCharacters.add(new MenuCharacter(850, 100, 0.5, true, true));
+		grpWeekCharacters.add(new MenuCharacter(0, 100, 0.5, false));
+		grpWeekCharacters.add(new MenuCharacter(450, 25, 0.9, true));
+		grpWeekCharacters.add(new MenuCharacter(850, 100, 0.5, true));
 
 		difficultySelectors = new FlxGroup();
 		add(difficultySelectors);
