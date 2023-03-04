@@ -231,6 +231,8 @@ class PlayState extends MusicBeatState {
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
 
+		SONG.stage = curStage;
+
 		if (Assets.exists(Paths.hx("data/" + SONG.song.toLowerCase() + "/script"))) {
 		    script.loadScript("data/" + SONG.song.toLowerCase() + "/script");
 		}
@@ -293,11 +295,12 @@ class PlayState extends MusicBeatState {
 
 		script.call('create');
 
-		switch (SONG.stage) {
+		switch (curStage) {
 			default:
 				{
-					defaultCamZoom = 0.9;
 					curStage = 'stage';
+					defaultCamZoom = 0.9;
+
 					var bg:FlxSprite = new FlxSprite(-600, -200).loadGraphic(Paths.image('stageback', 'shared'));
 					bg.antialiasing = true;
 					bg.scrollFactor.set(0.9, 0.9);
@@ -323,9 +326,14 @@ class PlayState extends MusicBeatState {
 				}
 		}
 
-		switch (SONG.gfVersion) {
-			default:
-				gfVersion = 'gf';
+		if (SONG.gfVersion == null) {
+			switch (curStage) {
+				default:
+					gfVersion = 'gf';
+			}
+		}
+		else {
+			gfVersion = SONG.gfVersion;
 		}
 
 		gf = new Character(400, 130, gfVersion);
