@@ -8,7 +8,10 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
+import modding.scripting.Hscript;
 import flixel.input.keyboard.FlxKey;
+import flixel.addons.effects.FlxTrail;
+import flixel.addons.effects.FlxTrailArea;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
@@ -150,10 +153,15 @@ class PlayState extends MusicBeatState {
 
 	var grpNoteSplashes:FlxTypedGroup<NoteSplash>;
 
+	public var gfVersion:String = 'gf';
+
 	public var hideGf:Bool = false; // write hideGf = true in stage to remove gf !
-	
+
+	public var script = new Hscript();
+
 	override public function create() {
 		instance = this;
+
 		FlxG.mouse.visible = false;
 
 		Paths.clearStoredMemory();
@@ -223,6 +231,68 @@ class PlayState extends MusicBeatState {
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
 
+		if (Assets.exists(Paths.hx("data/" + SONG.song.toLowerCase() + "/script"))) {
+		    script.loadScript("data/" + SONG.song.toLowerCase() + "/script");
+		}
+
+		script.interp.variables.set("add", function(value:Dynamic)
+		{
+			add(value);
+		});
+
+		script.interp.variables.set("remove", function(value:Dynamic)
+		{
+			remove(value);
+		});
+
+		script.interp.variables.set("setDefaultZoom", function(value:Dynamic)
+		{
+			defaultCamZoom = value;
+		});
+
+		script.interp.variables.set("setGF", function(value:Dynamic)
+		{
+			gfVersion = value;
+		});
+
+		script.interp.variables.set("curGF", function()
+		{
+			return gfVersion;
+		});
+
+		script.interp.variables.set("createTrail", function(char:Dynamic, graphic:Dynamic, length:Dynamic, delay:Dynamic, alpha:Dynamic, diff:Dynamic, ?addInGroup:Dynamic, ?group:Dynamic)
+		{
+			var trail = new FlxTrail(char, graphic, length, delay, alpha, diff);
+
+			if (addInGroup == true && group != null)
+				group.add(trail);
+			else
+				add(trail);
+		});
+
+		script.interp.variables.set("boyfriend", boyfriend);
+		script.interp.variables.set("dad", dad);
+		script.interp.variables.set("gf", gf);
+
+		script.interp.variables.set("camHUD", camHUD);
+		script.interp.variables.set("camGame", camGame);
+
+		script.interp.variables.set("defaultCamZoom", defaultCamZoom);
+		script.interp.variables.set("curSong", SONG.song);
+		script.interp.variables.set("SONG", SONG);
+		script.interp.variables.set("curStage", curStage);
+		script.interp.variables.set("gfVersion", gfVersion);
+
+		script.interp.variables.set("inCutscene", inCutscene);
+		script.interp.variables.set("curBeat", curBeat);
+		script.interp.variables.set("curStep", curStep);
+
+		script.interp.variables.set("playerStrums", playerStrums);
+		script.interp.variables.set("cpuStrums", cpuStrums);
+		script.interp.variables.set("strumLines", strumLineNotes);
+
+		script.call('create');
+
 		switch (SONG.stage) {
 			default:
 				{
@@ -252,8 +322,6 @@ class PlayState extends MusicBeatState {
 					add(stageCurtains);
 				}
 		}
-
-		var gfVersion:String = 'gf';
 
 		switch (SONG.gfVersion) {
 			default:
@@ -437,6 +505,8 @@ class PlayState extends MusicBeatState {
 		super.create();
 
 		Paths.clearUnusedMemory();
+
+		script.call("createPost");
 	}
 
 	var startTimer:FlxTimer;
@@ -930,6 +1000,8 @@ class PlayState extends MusicBeatState {
 			}
 		}
 
+		script.call("update", [elapsed]);
+
 		super.update(elapsed);
 
 		var scoreTxtChecked:Bool = false;
@@ -1281,6 +1353,8 @@ class PlayState extends MusicBeatState {
 
 		if (!inCutscene)
 			keyShit();
+
+		script.call("updatePost", [elapsed]);
 	}
 
 	function endSong():Void {
@@ -1765,6 +1839,9 @@ class PlayState extends MusicBeatState {
 
 	override function stepHit() {
 		super.stepHit();
+
+		script.call("stepHit", [curStep]);
+
 		if (FlxG.sound.music.time > Conductor.songPosition + 20 || FlxG.sound.music.time < Conductor.songPosition - 20)
 			resyncVocals();
 
@@ -1790,6 +1867,8 @@ class PlayState extends MusicBeatState {
 
 	override function beatHit() {
 		super.beatHit();
+
+		script.call("beatHit", [curBeat]);
 
 		if (generatedMusic)
 			notes.sort(FlxSort.byY, (FlxG.save.data.downscroll ? FlxSort.ASCENDING : FlxSort.DESCENDING));
