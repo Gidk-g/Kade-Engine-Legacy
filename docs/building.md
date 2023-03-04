@@ -19,11 +19,12 @@
 	 - `haxelib run flixel-tools setup`
 	 - `haxelib install flixel-addons`
 	 - `haxelib install flixel-ui`
-	 - `haxelib install hscript`
 	 - `haxelib install linc_luajit`
 	 - `haxelib install hxCodec`
 	 - `haxelib git faxe https://github.com/uhrobots/faxe`
 	 - `haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc`
+	 - `haxelib git polymod https://github.com/SrtHero278/scriptless-polymod`
+	 - `haxelib git hscript-improved https://github.com/YoshiCrafter29/hscript-improved`
 
 ### Windows-only dependencies (only for building *to* Windows. Building html5 on Windows does not require this)
 If you are planning to build for Windows, you also need to install **Visual Studio 2019**.

@@ -3,6 +3,7 @@ package;
 #if windows
 import Discord.DiscordClient;
 #end
+import polymod.Polymod;
 import flixel.util.FlxColor;
 import openfl.Lib;
 import Conductor.BPMChangeEvent;
@@ -19,6 +20,12 @@ class MusicBeatState extends FlxUIState {
 
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
+
+	override public function new()
+	{
+		Polymod.clearCache();
+		super();
+	}
 
 	override function create() {
 		if (transIn != null)

@@ -1,5 +1,6 @@
 package;
 
+import modding.ModState;
 import Controls.KeyboardScheme;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -24,7 +25,7 @@ class MainMenuState extends MusicBeatState {
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
 	#if !switch
-	var optionShit:Array<String> = ['story_mode', 'freeplay', 'options'];
+	var optionShit:Array<String> = ['story_mode', 'freeplay', 'mods', 'options'];
 	#else
 	var optionShit:Array<String> = ['story_mode', 'freeplay'];
 	#end
@@ -175,6 +176,8 @@ class MainMenuState extends MusicBeatState {
 				FlxG.switchState(new StoryMenuState());
 			case 'freeplay':
 				FlxG.switchState(new FreeplayState());
+			case 'mods':
+				FlxG.switchState(new ModState());
 			case 'options':
 				FlxG.switchState(new OptionsMenu());
 		}
