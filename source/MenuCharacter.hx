@@ -8,14 +8,14 @@ class CharacterSetting {
 	public var y(default, null):Int;
 	public var scale(default, null):Float;
 	public var flipped(default, null):Bool;
-	public var antialiasing(default, null):Bool;
+	public var pixel(default, null):Bool;
 
-	public function new(x:Int = 0, y:Int = 0, scale:Float = 1.0, flipped:Bool = false, antialiasing:Bool = true) {
+	public function new(x:Int = 0, y:Int = 0, scale:Float = 1.0, flipped:Bool = false, pixel:Bool = true) {
 		this.x = x;
 		this.y = y;
 		this.scale = scale;
 		this.flipped = flipped;
-		this.antialiasing = antialiasing;
+		this.pixel = pixel;
 	}
 }
 
@@ -27,10 +27,12 @@ class MenuCharacter extends FlxSprite {
 	];
 
 	private var flipped:Bool = false;
+	private var pixel:Bool = true;
 
-	public function new(x:Int, y:Int, scale:Float, flipped:Bool) {
+	public function new(x:Int, y:Int, scale:Float, flipped:Bool, pixel:Bool) {
 		super(x, y);
 		this.flipped = flipped;
+		this.pixel = pixel;
 		setGraphicSize(Std.int(width * scale));
 		updateHitbox();
 	}
@@ -71,5 +73,6 @@ class MenuCharacter extends FlxSprite {
 		offset.set(setting.x, setting.y);
 		setGraphicSize(Std.int(width * setting.scale));
 		flipX = setting.flipped != flipped;
+		antialiasing = setting.pixel != pixel;
 	}
 }
