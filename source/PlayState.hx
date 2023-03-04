@@ -328,6 +328,10 @@ class PlayState extends MusicBeatState {
 				}
 		}
 
+		if (Assets.exists(Paths.hx("stages/" + curStage))) {
+		    script.loadScript("stages/" + curStage);
+		}
+
 		if (SONG.gfVersion == null) {
 			switch (curStage) {
 				default:
