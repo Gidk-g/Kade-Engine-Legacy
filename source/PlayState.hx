@@ -538,6 +538,8 @@ class PlayState extends MusicBeatState {
 		Conductor.songPosition = 0;
 		Conductor.songPosition -= Conductor.crochet * 5;
 
+		script.call("startCountdown");
+
 		var swagCounter:Int = 0;
 
 		startTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer) {
@@ -633,6 +635,8 @@ class PlayState extends MusicBeatState {
 			default:
 				allowedToHeadbang = false;
 		}
+
+		script.call("startSong");
 
 		#if windows
 		DiscordClient.changePresence(detailsText
@@ -849,6 +853,8 @@ class PlayState extends MusicBeatState {
 			});
 
 			strumLineNotes.add(babyArrow);
+
+			script.call("generateStaticArrows", [player]);
 		}
 	}
 
@@ -1300,6 +1306,8 @@ class PlayState extends MusicBeatState {
 							spr.centerOffsets();
 					});
 
+					script.call("dadNoteHit");
+
 					dad.holdTimer = 0;
 
 					if (SONG.needsVoices)
@@ -1393,6 +1401,8 @@ class PlayState extends MusicBeatState {
 			#end
 		}
 
+		script.call("endSong");
+
 		if (isStoryMode) {
 			campaignScore += Math.round(songScore);
 
@@ -1472,6 +1482,8 @@ class PlayState extends MusicBeatState {
 		var rating:FlxSprite = new FlxSprite();
 		var score:Float = 350;
 		var daRating = daNote.rating;
+
+		script.call("popUpScore", [daNote]);
 
 		switch (daRating) {
 			case 'shit':
@@ -1758,6 +1770,8 @@ class PlayState extends MusicBeatState {
 			}
 
 			updateAccuracy();
+
+			script.call("noteMiss", [direction, daNote]);
 		}
 	}
 
@@ -1848,6 +1862,8 @@ class PlayState extends MusicBeatState {
 			note.destroy();
 
 			updateAccuracy();
+
+			script.call("goodNoteHit", [note, resetMashViolation]);
 		}
 	}
 
