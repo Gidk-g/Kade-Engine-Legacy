@@ -75,6 +75,8 @@ class Hscript
 		interp.variables.set("Character", Character);
 		interp.variables.set("Boyfriend", Boyfriend);
 
+		interp.variables.set("BGSprite", BGSprite);
+
 		interp.variables.set("Song", Song);
 		interp.variables.set("Conductor", Conductor);
 		interp.variables.set("Note", Note);
