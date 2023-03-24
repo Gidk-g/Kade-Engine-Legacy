@@ -1,5 +1,6 @@
 package;
 
+import cpp.CPPInterface;
 import openfl.display.BlendMode;
 import openfl.text.TextFormat;
 import openfl.display.Application;
@@ -70,8 +71,18 @@ class Main extends Sprite {
 
 		fpsCounter = new Overlay(10, 3, gameWidth, gameHeight);
 		addChild(fpsCounter);
+
 		if (fpsCounter != null)
 			fpsCounter.visible = FlxG.save.data.fps;
+
+		#if cpp
+		CPPInterface.darkMode();
+		#end
+
+		#if cpp
+		cpp.NativeGc.enable(true);
+		cpp.NativeGc.run(true);
+		#end
 	}
 
 	public function toggleFPS(fpsEnabled:Bool):Void {
