@@ -85,6 +85,7 @@ class PlayState extends MusicBeatState {
 	public static var strumLineNotes:FlxTypedGroup<FlxSprite> = null;
 	public static var playerStrums:FlxTypedGroup<FlxSprite> = null;
 	public static var cpuStrums:FlxTypedGroup<FlxSprite> = null;
+	public static var noteSplashGroup:FlxTypedGroup<NoteSplash>;
 
 	private var camZooming:Bool = false;
 	private var curSong:String = "";
@@ -150,8 +151,6 @@ class PlayState extends MusicBeatState {
 	private var allowedToHeadbang:Bool = false;
 
 	private var botPlayState:FlxText;
-
-	var grpNoteSplashes:FlxTypedGroup<NoteSplash>;
 
 	public var gfVersion:String = 'gf';
 
@@ -398,13 +397,8 @@ class PlayState extends MusicBeatState {
 		strumLineNotes = new FlxTypedGroup<FlxSprite>();
 		add(strumLineNotes);
 
-		grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
-
-		var noteSplash:NoteSplash = new NoteSplash(100, 100, 0);
-		grpNoteSplashes.add(noteSplash);
-		noteSplash.alpha = 0.00001;
-
-		add(grpNoteSplashes);
+		noteSplashGroup = new FlxTypedGroup<NoteSplash>();
+		add(noteSplashGroup);
 
 		playerStrums = new FlxTypedGroup<FlxSprite>();
 		cpuStrums = new FlxTypedGroup<FlxSprite>();
@@ -496,7 +490,7 @@ class PlayState extends MusicBeatState {
 		info.scrollFactor.set();
 		add(info);
 
-		grpNoteSplashes.cameras = [camHUD];
+		noteSplashGroup.cameras = [camHUD];
 		strumLineNotes.cameras = [camHUD];
 		notes.cameras = [camHUD];
 		timer.cameras = [camHUD];
@@ -1515,9 +1509,7 @@ class PlayState extends MusicBeatState {
 				sicks++;
 		}
 		if (daRating == 'sick' && FlxG.save.data.noteSplashes) {
-			var noteSplash:NoteSplash = grpNoteSplashes.recycle(NoteSplash);
-			noteSplash.setupNoteSplash(daNote.x, daNote.y, daNote.noteData);
-			grpNoteSplashes.add(noteSplash);
+			spawnNoteSplash(daNote.noteData);
 		}
 
 		if (daRating != 'shit' || daRating != 'bad') {
@@ -1793,6 +1785,16 @@ class PlayState extends MusicBeatState {
 		if (possibleNotes.length == 1)
 			return possibleNotes.length + 1;
 		return possibleNotes.length;
+	}
+
+	public inline function spawnNoteSplash(noteData:Int) {
+		var staticNote:FlxSprite = playerStrums.members[noteData];
+		createNoteSplash(staticNote.x, staticNote.y, noteData);
+	}
+
+	public inline function createNoteSplash(x:Float, y:Float, noteData:Int) {
+		var splash:NoteSplash = new NoteSplash(x, y, noteData);
+		noteSplashGroup.add(splash);
 	}
 
 	var mashing:Int = 0;
