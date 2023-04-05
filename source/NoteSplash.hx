@@ -18,7 +18,6 @@ class NoteSplash extends FlxSprite {
         setPosition(x - Note.swagWidth * 0.95, y - Note.swagWidth);
         offset.set(10, 10);
 
-
         animation.play('note' + noteData + '-' + FlxG.random.int(1,2), true);
 
         if (animation.curAnim != null) {
